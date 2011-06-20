@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef MURL_H
+#define MURL_H
+
 /* murlificate() return error codes */
 #define MURL_ERR_SUCCESS	0
 #define MURL_ERR_UNKNOWN	1
@@ -37,3 +40,5 @@ struct murl_response {
  */
 const int murlificate(const char *api_key, char *long_url,
 		struct murl_response *res);
+
+#endif /* #ifndef MURL_H */
