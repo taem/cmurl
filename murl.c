@@ -17,6 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef _MSC_VER
+#pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "wsock32.lib")
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef _MSC_VER
@@ -124,7 +129,11 @@ static char *http_request(const char *hostname, const char *query)
 		/* Receive data */
 		ret = http_recv(sd);
 
+#ifdef _MSC_VER
+	closesocket(sd);
+#else
 	close(sd);
+#endif
 	return ret;
 }
 
@@ -187,7 +196,12 @@ static int http_connect(const char *hostname)
 		else
 			perror("connect");
 #endif
+
+#ifdef _MSC_VER
+		closesocket(sd);
+#else
 		close(sd);
+#endif
 	}
 
 #ifdef DEBUG
