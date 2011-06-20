@@ -16,8 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+UNAME := $(shell uname -s)
+
 cmurl: cmurl.o murl.o urlcode.o
+ifeq ($(UNAME), MINGW32_NT-6.1)
 	gcc -o cmurl cmurl.o murl.o urlcode.o -lws2_32 -lwsock32
+else
+	gcc -o cmurl cmurl.o murl.o urlcode.o
+endif
 
 cmurl.o: cmurl.c
 	gcc -g -c cmurl.c
