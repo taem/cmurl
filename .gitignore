@@ -3,3 +3,8 @@
 *.o
 /cmurl
 /cmurl.exe
+/vs2010/Debug
+/vs2010/Release
+*.opensdf
+*.sdf
+*.vcxproj.user
