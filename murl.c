@@ -124,6 +124,16 @@ static char *http_request(const char *hostname, const char *query)
 	return ret;
 }
 
+#ifdef WIN32
+/*
+ * Win32 helper for the http_connect.
+ */
+void clean_tcp()
+{
+   while (WSACleanup() == 0);
+}
+#endif
+
 /*
  * Establish a connection to the server
  */
@@ -139,6 +149,12 @@ static int http_connect(const char *hostname)
 	hints.ai_flags = 0;
 	hints.ai_protocol = 0;
 
+#ifdef WIN32
+	WSADATA wsaData;
+	WSAStartup(MAKEWORD(2, 2), &wsaData);
+	atexit(clean_tcp);
+#endif
+	
 	/* Get server IP */
 	err = getaddrinfo(hostname, "http", &hints, &res);
 	if (err != 0) {
