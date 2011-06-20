@@ -19,11 +19,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef _MSC_VER
+#define ssize_t int
+#else
 #include <unistd.h>
+#endif
 #include <string.h>
 #include <errno.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #define _WIN32_WINNT 0x501
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -143,17 +147,18 @@ static int http_connect(const char *hostname)
 	struct addrinfo *res, *addr;
 	int err, sd, ret = -1;
 
+#ifdef _WIN32
+	WSADATA wsaData;
+
+	WSAStartup(MAKEWORD(2, 2), &wsaData);
+	atexit(clean_tcp);
+#endif
+
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = 0;
 	hints.ai_protocol = 0;
-
-#ifdef WIN32
-	WSADATA wsaData;
-	WSAStartup(MAKEWORD(2, 2), &wsaData);
-	atexit(clean_tcp);
-#endif
 	
 	/* Get server IP */
 	err = getaddrinfo(hostname, "http", &hints, &res);
