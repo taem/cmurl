@@ -23,9 +23,16 @@
 #include <string.h>
 #include <errno.h>
 
+#ifdef WIN32
+#define _WIN32_WINNT 0x501
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <windows.h>
+#else
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#endif
 
 #include "murl.h"
 

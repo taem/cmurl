@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 cmurl: cmurl.o murl.o urlcode.o
-	gcc -o cmurl cmurl.o murl.o urlcode.o
+	gcc -o cmurl cmurl.o murl.o urlcode.o -lws2_32 -lwsock32
 
 cmurl.o: cmurl.c
 	gcc -g -c cmurl.c
