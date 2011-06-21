@@ -27,23 +27,32 @@
 
 /* murlificate() return error codes */
 #define MURL_ERR_SUCCESS	0
-#define MURL_ERR_UNKNOWN	1
+#define MURL_ERR_MEM		1
+#define MURL_ERR_NETWORK	2
+#define MURL_ERR_PARSE		3
 
-/* Service reply status */
+/* API response status */
 #define MURL_OK			0
 #define MURL_ERROR		1
+#define MURL_UNKNOWN		2
 
-/* Service response */
+/* API response */
 struct murl_response {
-	int status;		/* Service reply status */
+	int status;		/* Response status */
+	int code;		/* Status code: 200, 400, etc */
 	char *url;		/* Short link */
-	char *raw_reply;	/* Raw server reply with HTTP headers*/
+	char *message;		/* Human readable message */
+	char *raw_reply;	/* Server reply with HTTP headers */
 };
+
+/* HTTP request callback */
+typedef int (*murl_http_request) (const char *hostname, const char *req,
+				char *reply);
 
 /*
  * Get short link for long URL
  */
-const int murlificate(const char *api_key, char *long_url,
-		struct murl_response *res);
+const int murlificate(const char *api_key, const char *url,
+		struct murl_response *res, murl_http_request cb);
 
 #endif /* MURL_H */

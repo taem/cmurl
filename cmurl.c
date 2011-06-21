@@ -34,22 +34,32 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	err = murlificate(argv[1], argv[2], &res);
+	err = murlificate(argv[1], argv[2], &res, NULL);
 	if (err != MURL_ERR_SUCCESS) {
-		fprintf(stderr, "ERROR: something went wrong :(\n");
+		fprintf(stderr, "ERROR: ");
+		if (err == -MURL_ERR_PARSE) {
+			fprintf(stderr, "cannot parse reply:\n%s\n", res.raw_reply);
+			free(res.raw_reply);
+		} else
+			fprintf(stderr, "something went wrong :(\n");
 		exit(EXIT_FAILURE);
 	}
 
 	switch (res.status) {
 	case MURL_OK:
 		printf("%s\n", res.url);
-		free(res.url);
 		break;
 	case MURL_ERROR:
-		printf("ERROR: cannot get short link\n");
+		printf("ERROR: %s\n", res.message);
+		break;
+	case MURL_UNKNOWN:
+		printf("ERROR: unknown response status: %s\n", res.message);
 		break;
 	}
 
+	free(res.message);
+	if (res.status == MURL_OK)
+		free(res.url);
 	free(res.raw_reply);
 	exit(EXIT_SUCCESS);
 }

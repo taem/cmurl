@@ -32,10 +32,10 @@ cmurl.o: cmurl.c
 	gcc -g -c cmurl.c
 
 murl.o: murl.c
-	gcc -DDEBUG -g -c -fPIC murl.c
+	gcc -DDEBUG -g -c murl.c
 
 urlcode.o: urlcode.c
-	gcc -g -c -fPIC urlcode.c
+	gcc -g -c urlcode.c
 
 clean:
 	rm -f *.o cmurl
