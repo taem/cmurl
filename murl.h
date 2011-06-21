@@ -17,6 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * Porting credits:
+ *   Windows: resurtm <resurtm@gmail.com>
+ */
+
 #ifndef MURL_H
 #define MURL_H
 

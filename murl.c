@@ -17,6 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * Porting credits:
+ *   Windows: resurtm <resurtm@gmail.com>
+ */
+
 #ifdef _MSC_VER
   #pragma comment(lib, "ws2_32.lib")
   #pragma comment(lib, "wsock32.lib")
