@@ -17,15 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef _MSC_VER
+#pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "wsock32.lib")
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef _MSC_VER
+#define ssize_t int
+#else
 #include <unistd.h>
+#endif
 #include <string.h>
 #include <errno.h>
 
+#ifdef _WIN32
+#define _WIN32_WINNT 0x501
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <windows.h>
+#else
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#endif
 
 #include "murl.h"
 
@@ -113,9 +129,23 @@ static char *http_request(const char *hostname, const char *query)
 		/* Receive data */
 		ret = http_recv(sd);
 
+#ifdef _MSC_VER
+	closesocket(sd);
+#else
 	close(sd);
+#endif
 	return ret;
 }
+
+#ifdef WIN32
+/*
+ * Win32 helper for the http_connect.
+ */
+void clean_tcp()
+{
+   while (WSACleanup() == 0);
+}
+#endif
 
 /*
  * Establish a connection to the server
@@ -126,12 +156,19 @@ static int http_connect(const char *hostname)
 	struct addrinfo *res, *addr;
 	int err, sd, ret = -1;
 
+#ifdef _WIN32
+	WSADATA wsaData;
+
+	WSAStartup(MAKEWORD(2, 2), &wsaData);
+	atexit(clean_tcp);
+#endif
+
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = 0;
 	hints.ai_protocol = 0;
-
+	
 	/* Get server IP */
 	err = getaddrinfo(hostname, "http", &hints, &res);
 	if (err != 0) {
@@ -159,7 +196,12 @@ static int http_connect(const char *hostname)
 		else
 			perror("connect");
 #endif
+
+#ifdef _MSC_VER
+		closesocket(sd);
+#else
 		close(sd);
+#endif
 	}
 
 #ifdef DEBUG
