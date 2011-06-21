@@ -41,4 +41,4 @@ struct murl_response {
 const int murlificate(const char *api_key, char *long_url,
 		struct murl_response *res);
 
-#endif /* #ifndef MURL_H */
+#endif /* MURL_H */

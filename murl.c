@@ -18,29 +18,29 @@
  */
 
 #ifdef _MSC_VER
-#pragma comment(lib, "ws2_32.lib")
-#pragma comment(lib, "wsock32.lib")
+  #pragma comment(lib, "ws2_32.lib")
+  #pragma comment(lib, "wsock32.lib")
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef _MSC_VER
-#define ssize_t int
+  #define ssize_t int
 #else
-#include <unistd.h>
+  #include <unistd.h>
 #endif
 #include <string.h>
 #include <errno.h>
 
 #ifdef _WIN32
-#define _WIN32_WINNT 0x501
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <windows.h>
+  #define _WIN32_WINNT 0x501
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+  #include <windows.h>
 #else
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
+  #include <sys/types.h>
+  #include <sys/socket.h>
+  #include <netdb.h>
 #endif
 
 #include "murl.h"
@@ -139,11 +139,11 @@ static char *http_request(const char *hostname, const char *query)
 
 #ifdef WIN32
 /*
- * Win32 helper for the http_connect.
+ * Win32 helper for the http_connect
  */
 void clean_tcp()
 {
-   while (WSACleanup() == 0);
+	while (WSACleanup() == 0);
 }
 #endif
 
