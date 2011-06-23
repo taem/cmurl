@@ -334,15 +334,15 @@ static int parse_reply(char *reply, struct murl_response *res)
 		return ret;
 
 	/* message */
-	if ((msg = getvalue(reply, "message")) != NULL) {
-		if (status == MURL_OK)
-			/* url */
-			if ((url = getvalue(reply, "url")) == NULL) {
-				free(msg);
-				return ret;
-			}
-	} else
+	if ((msg = getvalue(reply, "message")) == NULL)
 		return ret;
+
+	/* url */
+	if (status == MURL_OK)
+		if ((url = getvalue(reply, "url")) == NULL) {
+			free(msg);
+			return ret;
+		}
 
 	res->status = status;
 	res->code = code;
