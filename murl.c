@@ -262,7 +262,6 @@ static int http_recv(int sd, char *buf)
 
 	if ((len = recv(sd, buf, BUF_SIZE - 1, 0)) < 0) {
 		/* An error occured while receiving data */
-		free(buf);
 #ifdef DEBUG
 		perror("recv");
 #endif
