@@ -111,8 +111,7 @@ static int murl_req(char *req, const char *hostname, struct murl_response *res,
 
 	/* Parse server reply */
 	res->raw_reply = reply;
-	if ((ret = parse_reply(reply, res)) != MURL_ERR_SUCCESS)
-		return ret;
+	ret = parse_reply(reply, res);
 
 	return ret;
 }
