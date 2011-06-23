@@ -116,7 +116,7 @@ static int murl_req(char *req, const char *hostname, struct murl_response *res,
 	return ret;
 }
 
-#define HTTP_GET_REQ		"GET %s HTTP/1.0\nHost: %s\nUser-Agent: %s\n\n"
+#define HTTP_REQ		"GET %s HTTP/1.0\nHost: %s\nUser-Agent: %s\n\n"
 #define USER_AGENT		"murl.c"
 
 static int http_connect(const char *hostname, int *sd);
@@ -128,31 +128,32 @@ static int http_recv(int sd, char *buf);
  */
 static int http_request(const char *hostname, const char *req, char *reply)
 {
-	int sd, len, ret = -MURL_ERR_MEM;
+	int sd, len, ret;
 	char *buf;
 
-	len = (strlen(HTTP_GET_REQ) - 6) + strlen(req) + strlen(hostname) +
-		strlen(USER_AGENT);
-	if ((buf = malloc(len + 1)) == NULL)
+	if ((ret = http_connect(hostname, &sd)) != MURL_ERR_SUCCESS)
 		return ret;
 
-	if (sprintf(buf, HTTP_GET_REQ, req, hostname, USER_AGENT) == len) {
-		/* Connect to the server */
-		if ((ret = http_connect(hostname, &sd)) == MURL_ERR_SUCCESS) {
-			/* Send data */
-			if ((ret = http_send(sd, buf)) == MURL_ERR_SUCCESS)
-				/* Receive data */
-				ret = http_recv(sd, reply);
-#ifdef _MSC_VER
-			closesocket(sd);
-#else
-			close(sd);
-#endif
-		}
-	} else
-		ret = -MURL_ERR_MEM;
+	ret = -MURL_ERR_MEM;
 
-	free(buf);
+	/* Send data */
+	len = (strlen(HTTP_REQ) - 6) + strlen(req) + strlen(hostname) +
+		strlen(USER_AGENT);
+	if ((buf = malloc(len + 1)) != NULL) {
+		if (sprintf(buf, HTTP_REQ, req, hostname, USER_AGENT) == len)
+			ret = http_send(sd, buf);
+		free(buf);
+	}
+
+	/* Receive data */
+	if (ret == MURL_ERR_SUCCESS)
+		ret = http_recv(sd, reply);
+
+#ifdef _MSC_VER
+	closesocket(sd);
+#else
+	close(sd);
+#endif
 	return ret;
 }
 
