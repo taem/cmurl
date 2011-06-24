@@ -19,12 +19,14 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "murl.h"
 
 
 int main(int argc, char **argv)
 {
+	char *url, *s, *proto = "http://";
 	struct murl_response res;
 	int err;
 
@@ -34,7 +36,17 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	err = murlificate(argv[1], argv[2], &res, NULL);
+	url = argv[2];
+	if (strstr(url, proto) == NULL) {
+		if ((s = malloc(strlen(proto) + strlen(url) + 1)) == NULL) {
+			fprintf(stderr, "Cannot allocate memory.\n");
+			exit(EXIT_FAILURE);
+		}
+		strcat(s, proto);
+		strcat(s, url);
+	} else
+		s = url;
+	err = murlificate(argv[1], s, &res, NULL);
 	if (err != MURL_ERR_SUCCESS) {
 		fprintf(stderr, "ERROR: ");
 		if (err == -MURL_ERR_PARSE) {
