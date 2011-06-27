@@ -56,6 +56,7 @@
 
 
 extern char *url_encode(char *str);
+static char *murl_sprintf(const char *fmt, ...);
 static int murl_req(char *req, const char *hostname, struct murl_response *res,
 		murl_http_request cb);
 
@@ -72,10 +73,8 @@ const int murlificate(const char *api_key, const char *url,
 		return ret;
 
 	/* Build API string */
-	len = (strlen(API_HANDLER_BASIC) - 4) +	strlen(api_key) + strlen(urlenc);
-	if ((api = malloc(len + 1)) != NULL) {
-		if (sprintf(api, API_HANDLER_BASIC, api_key, urlenc) == len)
-			ret = murl_req(api, API_HOST, res, cb);
+	if ((api = murl_sprintf(API_HANDLER_BASIC, api_key, urlenc)) != NULL) {
+		ret = murl_req(api, API_HOST, res, cb);
 		free(api);
 	}
 
@@ -134,16 +133,12 @@ static int http_request(const char *hostname, const char *req, char *reply)
 	if ((ret = http_connect(hostname, &sd)) != MURL_ERR_SUCCESS)
 		return ret;
 
-	ret = -MURL_ERR_MEM;
-
 	/* Send data */
-	len = (strlen(HTTP_REQ) - 6) + strlen(req) + strlen(hostname) +
-		strlen(USER_AGENT);
-	if ((buf = malloc(len + 1)) != NULL) {
-		if (sprintf(buf, HTTP_REQ, req, hostname, USER_AGENT) == len)
-			ret = http_send(sd, buf);
+	if ((buf = murl_sprintf(HTTP_REQ, req, hostname, USER_AGENT)) != NULL) {
+		ret = http_send(sd, buf);
 		free(buf);
-	}
+	} else
+		ret = -MURL_ERR_MEM;
 
 	/* Receive data */
 	if (ret == MURL_ERR_SUCCESS)
@@ -349,6 +344,37 @@ static int parse_reply(char *reply, struct murl_response *res)
 	res->message = msg;
 	res->url = url;
 	ret = MURL_ERR_SUCCESS;
+
+	return ret;
+}
+
+/*
+ *
+ */
+static char *murl_sprintf(const char *fmt, ...)
+{
+	va_list ap;
+	char *pfmt = (char *) fmt, *ret = NULL;
+	int len = 0, i = 0;
+
+	va_start(ap, fmt);
+	while (*pfmt) {
+		if (*pfmt == '%' && *(++pfmt) == 's') {
+			len += strlen(va_arg(ap, char *));
+			i++;
+		}
+		pfmt++;
+	}
+	va_end(ap);
+
+	if (len > 0) {
+		len += strlen(fmt) - (i * 2);
+		if ((ret = malloc(len + 1)) != NULL) {
+			va_start(ap, fmt);
+			len = vsprintf(ret, fmt, ap);
+			va_end(ap);
+		}
+	}
 
 	return ret;
 }
