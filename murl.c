@@ -67,7 +67,7 @@ const int murlificate(const char *api_key, const char *url,
 		struct murl_response *res, murl_http_request cb)
 {
 	char *urlenc, *api;
-	int len, ret = -MURL_ERR_MEM;
+	int ret = -MURL_ERR_MEM;
 
 	if ((urlenc = url_encode((char *) url)) == NULL)
 		return ret;
@@ -127,7 +127,7 @@ static int http_recv(int sd, char *buf);
  */
 static int http_request(const char *hostname, const char *req, char *reply)
 {
-	int sd, len, ret;
+	int sd, ret;
 	char *buf;
 
 	if ((ret = http_connect(hostname, &sd)) != MURL_ERR_SUCCESS)
