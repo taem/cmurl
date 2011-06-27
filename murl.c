@@ -373,6 +373,8 @@ static char *murl_sprintf(const char *fmt, ...)
 			va_start(ap, fmt);
 			len = vsprintf(ret, fmt, ap);
 			va_end(ap);
+			if (len < 0)
+				free(ret);
 		}
 	}
 
