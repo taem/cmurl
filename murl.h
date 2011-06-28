@@ -25,7 +25,7 @@
 #ifndef MURL_H
 #define MURL_H
 
-/* murlificate() return error codes */
+/* Return error codes */
 #define MURL_ERR_SUCCESS	0
 #define MURL_ERR_MEM		1
 #define MURL_ERR_NETWORK	2
@@ -45,12 +45,24 @@ struct murl_response {
 	char *raw_reply;	/* Server reply with HTTP headers */
 };
 
-/* HTTP request callback */
-typedef int (*murl_http_request) (const char *hostname, const char *req,
-				char *reply);
+/*
+ * HTTP GET request callback
+ *
+ * Should return MURL_ERR_* error codes
+ */
+typedef int (*murl_http_request) (const char *hostname, /* API server hostname */
+				const char *req, /* API string */
+				char *reply /* Server reply with HTTP headers */
+	);
 
 /*
- * Get short link for long URL
+ * @brief Get short link for long URL
+ *
+ * @param api_key API key
+ * @param url Long URL
+ * @param res API response
+ * @param cb HTTP GET request callback
+ * @return MURL_ERR_* error codes
  */
 const int murlificate(const char *api_key, const char *url,
 		struct murl_response *res, murl_http_request cb);

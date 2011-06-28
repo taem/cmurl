@@ -54,8 +54,8 @@
 #define API_HOST		"api.murl.kz"
 #define API_HANDLER_BASIC	"/basic?format=rfc822&api_key=%s&url=%s"
 
-
-extern char *url_encode(char *str);
+/* Returns a url-encoded version of str */
+extern char *url_encode(char *str); /* urlcode.c */
 static char *murl_sprintf(const char *fmt, ...);
 static int murl_req(char *req, const char *hostname, struct murl_response *res,
 		murl_http_request cb);
@@ -82,13 +82,14 @@ const int murlificate(const char *api_key, const char *url,
 	return ret;
 }
 
+/* The length of the correct server reply should not exceed this value. */
 #define BUF_SIZE		2048
 
 static int http_request(const char *hostname, const char *req, char *reply);
 static int parse_reply(char *reply, struct murl_response *res);
 
 /*
- * Murl request
+ * Send request to the API server and parse its reply
  */
 static int murl_req(char *req, const char *hostname, struct murl_response *res,
 		murl_http_request cb)
@@ -96,6 +97,7 @@ static int murl_req(char *req, const char *hostname, struct murl_response *res,
 	char *reply;
 	int ret = -MURL_ERR_MEM;
 
+	/* Allocate memory for the server reply */
 	if ((reply = malloc(BUF_SIZE)) == NULL)
 		return ret;
 
@@ -130,6 +132,7 @@ static int http_request(const char *hostname, const char *req, char *reply)
 	int sd, ret;
 	char *buf;
 
+	/* Connect to the server */
 	if ((ret = http_connect(hostname, &sd)) != MURL_ERR_SUCCESS)
 		return ret;
 
@@ -269,7 +272,7 @@ static int http_recv(int sd, char *buf)
 }
 
 /*
- *
+ * Extract field value from the Murl reply
  */
 static char *getvalue(char *buf, const char *field)
 {
@@ -280,6 +283,7 @@ static char *getvalue(char *buf, const char *field)
 	if ((dup = strdup(buf)) == NULL)
 		return ret;
 
+	/* FIXME: check for a duplicate fields */
 	if ((s = strstr(dup, field)) != NULL &&
 		(c = strchr(s, '\n')) != NULL) {
 		*c = '\0';
@@ -325,8 +329,7 @@ static int parse_reply(char *reply, struct murl_response *res)
 	code = atoi(v);
 	free(v);
 	if (code == -1)
-		/* Conversion error */
-		return ret;
+		return ret; /* Conversion error */
 
 	/* message */
 	if ((msg = getvalue(reply, "message")) == NULL)
@@ -349,7 +352,9 @@ static int parse_reply(char *reply, struct murl_response *res)
 }
 
 /*
+ * sprintf like function to help build API strings
  *
+ * FIXME: parses '%s' conversion specifier only
  */
 static char *murl_sprintf(const char *fmt, ...)
 {
