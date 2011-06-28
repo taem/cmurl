@@ -376,10 +376,9 @@ static char *murl_sprintf(const char *fmt, ...)
 		len += strlen(fmt) - (i * 2);
 		if ((ret = malloc(len + 1)) != NULL) {
 			va_start(ap, fmt);
-			len = vsprintf(ret, fmt, ap);
-			va_end(ap);
-			if (len < 0)
+			if (vsprintf(ret, fmt, ap) != len)
 				free(ret);
+			va_end(ap);
 		}
 	}
 
