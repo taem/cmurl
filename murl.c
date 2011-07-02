@@ -82,8 +82,9 @@ const int murlificate(const char *api_key, const char *url,
 	return ret;
 }
 
-/* The length of the correct server reply should not exceed this value. */
-#define BUF_SIZE		2048
+/* The length of the correct server */
+/* reply should not exceed this value. */
+#define BUFSIZE			512
 
 static int http_request(const char *hostname, const char *req, char *reply);
 static int parse_reply(char *reply, struct murl_response *res);
@@ -98,7 +99,7 @@ static int murl_req(char *req, const char *hostname, struct murl_response *res,
 	int ret = -MURL_ERR_MEM;
 
 	/* Allocate memory for the server reply */
-	if ((reply = malloc(BUF_SIZE)) == NULL)
+	if ((reply = malloc(BUFSIZE)) == NULL)
 		return ret;
 
 	/* Send HTTP GET request */
@@ -258,7 +259,7 @@ static int http_recv(int sd, char *buf)
 	int ret = -MURL_ERR_NETWORK;
 	ssize_t len;
 
-	if ((len = recv(sd, buf, BUF_SIZE - 1, 0)) < 0) {
+	if ((len = recv(sd, buf, BUFSIZE - 1, 0)) < 0) {
 		/* An error occured while receiving data */
 #ifdef DEBUG
 		perror("recv");
