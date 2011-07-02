@@ -19,23 +19,27 @@
 # Porting credits:
 #   Windows: resurtm <resurtm@gmail.com>
 
-UNAME := $(shell uname -s)
+UNAME   := $(shell uname -s)
+NAME     = cmurl
 
-cmurl: cmurl.o murl.o urlcode.o
+CC      ?= cc
+RM      ?= rm -f
+
+OBJS     = cmurl.o murl.o urlcode.o
+CFLAGS   = -DDEBUG -D_POSIX_C_SOURCE -D_XOPEN_SOURCE=500 -std=c89 -Wall -pedantic
 ifeq ($(UNAME), MINGW32_NT-6.1)
-	gcc -o cmurl cmurl.o murl.o urlcode.o -lws2_32 -lwsock32
-else
-	gcc -o cmurl cmurl.o murl.o urlcode.o
+	LIBS = -lws2_32 -lwsock32
 endif
 
-cmurl.o: cmurl.c
-	gcc -g -c cmurl.c
+.c.o:
+	@printf "  CC      $@\n"
+	@$(CC) $(CFLAGS) -g -c -o $@ $<
 
-murl.o: murl.c
-	gcc -DDEBUG -g -c murl.c
+all: $(NAME)
 
-urlcode.o: urlcode.c
-	gcc -g -c urlcode.c
+$(NAME): $(OBJS)
+	@printf "  LINK    $@\n"
+	@$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
 clean:
-	rm -f *.o cmurl
+	@$(RM) $(OBJS) $(NAME)
