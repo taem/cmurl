@@ -104,7 +104,7 @@ static int murl_req(char *req, const char *hostname, struct murl_response *res,
 
 	/* Send HTTP GET request */
 	ret = (cb != NULL)
-		? cb(hostname, req, reply)
+		? (*cb)(hostname, req, reply)
 		: http_request(hostname, req, reply);
 	if (ret != MURL_ERR_SUCCESS) {
 		free(reply);
