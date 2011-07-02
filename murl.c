@@ -276,15 +276,15 @@ static int http_recv(int sd, char *buf)
  */
 static char *getvalue(char *buf, const char *field)
 {
-	char *dup, *s, *c;
+	char *str, *s, *c;
 	char *ret = NULL;
 	int len = 0;
 
-	if ((dup = strdup(buf)) == NULL)
+	if ((str = strdup(buf)) == NULL)
 		return ret;
 
 	/* FIXME: check for a duplicate fields */
-	if ((s = strstr(dup, field)) != NULL &&
+	if ((s = strstr(str, field)) != NULL &&
 		(c = strchr(s, '\n')) != NULL) {
 		*c = '\0';
 		while (*s++)
@@ -298,7 +298,7 @@ static char *getvalue(char *buf, const char *field)
 				free(ret);
 	}
 
-	free(dup);
+	free(str);
 	return ret;
 }
 
