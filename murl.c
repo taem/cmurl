@@ -290,12 +290,8 @@ static char *getvalue(char *buf, const char *field)
 	if ((s = strstr(str, field)) != NULL &&
 		(c = strchr(s, '\n')) != NULL) {
 		*c = '\0';
-		while (*s++)
-			if (*s == ' ') {
-				*s++;
-				len = strlen(s);
-				break;
-			}
+		if ((s = strstr(s, " ")) != NULL && *s++ != '\0')
+			len = strlen(s);
 		if (len > 0 && (ret = malloc(len + 1)) != NULL)
 			if (strcpy(ret, s) == NULL)
 				free(ret);
