@@ -118,8 +118,9 @@ static int murl_req(char *req, const char *hostname, struct murl_response *res,
 	return ret;
 }
 
-#define HTTP_REQ		"GET %s HTTP/1.0\nHost: %s\nUser-Agent: %s\n\n"
+#define HTTP_REQ		"GET %s HTTP/1.0\nHost: %s\nUser-Agent: %s/%s\n\n"
 #define USER_AGENT		"murl.c"
+#define VERSION			"0.1"
 
 static int http_connect(const char *hostname, int *sd);
 static int http_send(int sd, char *buf);
@@ -138,7 +139,8 @@ static int http_request(const char *hostname, const char *req, char *reply)
 		return ret;
 
 	/* Send data */
-	if ((buf = murl_sprintf(HTTP_REQ, req, hostname, USER_AGENT)) != NULL) {
+	if ((buf = murl_sprintf(HTTP_REQ, req, hostname, USER_AGENT,
+						VERSION)) != NULL) {
 		ret = http_send(sd, buf);
 		free(buf);
 	} else
