@@ -1,0 +1,21 @@
+murl.c
+======
+
+This is a small and simple Murl.kz API implementation in C. It's written in
+ANSI C (C89) and requires no third-party libraries. It was successfully compiled
+on Linux with GCC and clang. resurtm <resurtm@gmail.com> ported sources to
+the Windows.
+
+murl.c client uses 'rfc822' format for the API reply.
+
+There is API client usage example cmurl.c. To compile it just type:
+
+$ make
+
+and run it:
+
+$ ./cmurl <api_key> http://www.google.com
+
+Author: Timur Birsh <taem@linukz.org>.
+License: GNU General Public License Version 3.
+Sources: https://github.com/taem/cmurl.
